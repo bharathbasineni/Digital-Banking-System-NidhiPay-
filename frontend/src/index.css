@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-['Inter'] bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-50 transition-colors duration-200;
+  }
+}
+
+.glass-card {
+  @apply bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-white/20 dark:border-slate-700/50 shadow-lg;
+}
+
+.auth-bg {
+  background: linear-gradient(135deg, #f6f8fb 0%, #e5eaf1 100%);
+}
+
+.sidebar-shadow {
+  box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+}
+
+.gradient-text {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600;
+}
