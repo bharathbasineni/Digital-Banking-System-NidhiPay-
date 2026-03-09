@@ -8,10 +8,17 @@ const VerifyOTP = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [demoOtp, setDemoOtp] = useState('');
   
   const navigate = useNavigate();
   const location = useLocation();
   const signupData = location.state;
+
+  useEffect(() => {
+    if (signupData?.demoOtp) {
+      setDemoOtp(signupData.demoOtp);
+    }
+  }, [signupData]);
 
   useEffect(() => {
     if (!signupData || !signupData.email) {
@@ -51,8 +58,11 @@ const VerifyOTP = () => {
     setSuccess('');
     setLoading(true);
     try {
-      await api.post('/auth/register', signupData);
+      const { data } = await api.post('/auth/register', signupData);
       setSuccess('A new OTP has been sent to your email.');
+      if (data?.demoOtp) {
+        setDemoOtp(data.demoOtp);
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to resend OTP');
     }
@@ -87,6 +97,12 @@ const VerifyOTP = () => {
         {success && (
           <div className="p-4 mb-6 bg-emerald-50/80 backdrop-blur-sm text-emerald-600 rounded-2xl text-sm border border-emerald-100 flex items-center font-medium shadow-sm">
             <span className="mr-2">✅</span> {success}
+          </div>
+        )}
+
+        {demoOtp && (
+          <div className="p-4 mb-6 bg-blue-50/80 backdrop-blur-sm text-blue-700 rounded-2xl text-sm border border-blue-200 flex items-center font-medium shadow-sm">
+            <span className="mr-2">ℹ️</span> Demo Mode OTP: <strong className="ml-1 tracking-wider">{demoOtp}</strong>
           </div>
         )}
 
