@@ -154,15 +154,54 @@ router.post("/forgot-password", async (req, res) => {
       return res.status(400).json({ message: "Email is required" });
     }
 
-    // For now this is a demo response
+    // check if user exists
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate token
+    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret123', { expiresIn: '15m' });
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save();
+
+    const resetUrl = `https://digital-banking-system-nidhi-pay.vercel.app/reset-password/${resetToken}`;
+
+    const nodemailer = require("nodemailer");
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Password Reset - NidhiPay",
+      text: `Click the link to reset your password: ${resetUrl}`,
+      html: `
+        <h1>Password Reset Request</h1>
+        <p>You have requested to reset your password.</p>
+        <p>Please click the link below to reset it:</p>
+        <a href="${resetUrl}" clicktracking=off>${resetUrl}</a>
+        <p>This link is valid for 15 minutes.</p>
+      `
+    });
+
     return res.status(200).json({
       success: true,
-      message: "Password reset link sent successfully (demo)"
+      message: "Password reset link sent successfully to your email."
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error sending email:", error);
+    res.status(500).json({ message: "Server error while sending email" });
   }
 });
 
