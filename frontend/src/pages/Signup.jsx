@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { UserPlus } from 'lucide-react';
 import api from '../services/api';
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -150,9 +152,16 @@ const Signup = () => {
             <p className="text-xs text-slate-500 mt-2 font-medium">This PIN is required for all fund transfers.</p>
           </div>
 
+          <div className="flex justify-center mt-6">
+            <ReCAPTCHA
+              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              onChange={(token) => setCaptchaToken(token)}
+            />
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !captchaToken}
             className="w-full py-4 bg-indigo-600 text-white font-semibold rounded-2xl hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-xl shadow-indigo-600/20 disabled:opacity-70 mt-8 flex justify-center items-center group overflow-hidden relative"
           >
             <span className="relative z-10">{loading ? 'Creating Account...' : 'Sign Up Securely'}</span>

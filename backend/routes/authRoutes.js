@@ -76,7 +76,7 @@ router.post('/register', async (req, res) => {
 
       // Generate unique account number
       const accountNumber = await createUniqueAccountNumber();
-      
+
       await Account.create({
         userId: user._id,
         accountNumber: accountNumber,

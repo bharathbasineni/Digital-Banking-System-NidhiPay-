@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { LogIn } from 'lucide-react';
+import ReCAPTCHA from "react-google-recaptcha";
 import api from '../services/api';
 
 const Login = () => {
@@ -11,6 +12,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,51 +52,58 @@ const Login = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
-              <input
-                type="email"
-                className="w-full px-5 py-4 bg-slate-50 text-slate-900 placeholder:text-slate-400 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
-                placeholder="hello@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
+            <input
+              type="email"
+              className="w-full px-5 py-4 bg-slate-50 text-slate-900 placeholder:text-slate-400 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all"
+              placeholder="hello@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2 mt-4 flex justify-between">
-                Password
-              </label>
-              <input
-                type="password"
-                className="w-full px-5 py-4 bg-slate-50 text-slate-900 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all placeholder:text-slate-400"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-2 mt-4 flex justify-between">
+              Password
+            </label>
+            <input
+              type="password"
+              className="w-full px-5 py-4 bg-slate-50 text-slate-900 rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all placeholder:text-slate-400"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-            <div className="flex items-center justify-between mt-4">
-              <label className="flex items-center space-x-3 text-sm text-slate-600 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/30" />
-                <span>Remember me</span>
-              </label>
+          <div className="flex items-center justify-between mt-4">
+            <label className="flex items-center space-x-3 text-sm text-slate-600 cursor-pointer">
+              <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500/30" />
+              <span>Remember me</span>
+            </label>
 
-              <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                Forgot password?
-              </a>
-            </div>
+            <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+              Forgot password?
+            </a>
+          </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-600/20 disabled:opacity-70 disabled:active:scale-100 mt-8"
-            >
-              {loading ? 'Signing In...' : 'Sign In'}
-            </button>
-          </form>
+          <div className="flex justify-center mt-6">
+            <ReCAPTCHA
+              sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+              onChange={(token) => setCaptchaToken(token)}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || !captchaToken}
+            className="w-full py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-600/20 disabled:opacity-70 disabled:active:scale-100 mt-8"
+          >
+            {loading ? 'Signing In...' : 'Sign In'}
+          </button>
+        </form>
 
         <p className="mt-8 text-center text-slate-600 text-sm">
           Don't have an account?{' '}
