@@ -146,23 +146,22 @@ router.post('/login', loginLimiter, async (req, res) => {
   }
 });
 // POST /api/auth/forgot-password
-router.post('/forgot-password', async (req, res) => {
+router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
 
-    // check if user exists
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
     }
 
-    // for now just simulate reset
-    res.json({
-      message: "Password reset link sent to email (demo)"
+    // For now this is a demo response
+    return res.status(200).json({
+      success: true,
+      message: "Password reset link sent successfully (demo)"
     });
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
