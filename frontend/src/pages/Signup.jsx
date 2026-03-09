@@ -41,10 +41,10 @@ const Signup = () => {
     setLoading(true);
     try {
       await register(formData.name, formData.email, formData.password, formData.pin);
-      setSuccess('Registration successful! Redirecting to login...');
+      setSuccess('OTP sent successfully! Redirecting to verification...');
       setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+        navigate('/verify-otp', { state: { ...formData } });
+      }, 1500);
     } catch (err) {
       if (err.message === 'Network Error') {
         setError('Cannot connect to server. Please ensure the backend is running.');

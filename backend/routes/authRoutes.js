@@ -8,6 +8,7 @@ const Account = require('../models/Account');
 const LoginActivity = require('../models/LoginActivity');
 const SecurityLog = require('../models/SecurityLog');
 const sendEmail = require('../utils/sendEmail');
+const Otp = require('../models/Otp');
 
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -56,6 +57,52 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Store it temporarily with the user's data
+    await Otp.deleteMany({ email }); // Remove old OTPs for this email if any
+    await Otp.create({ email, otp });
+
+    // Send the OTP to the user's email
+    const message = `
+      <h1>NidhiPay Account Verification</h1>
+      <p>Your OTP code is: <strong>${otp}</strong></p>
+      <p>This OTP will expire in 5 minutes.</p>
+    `;
+
+    try {
+      await sendEmail({
+        email: email,
+        subject: 'NidhiPay Account Verification',
+        html: message
+      });
+
+      res.status(200).json({ message: 'OTP sent to email', requireOtp: true });
+    } catch (error) {
+      await Otp.deleteMany({ email });
+      return res.status(500).json({ message: 'Error sending OTP email' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// POST /api/auth/verify-otp
+router.post('/verify-otp', async (req, res) => {
+  const { name, email, password, pin, otp } = req.body;
+
+  try {
+    const otpRecord = await Otp.findOne({ email });
+
+    if (!otpRecord) {
+      return res.status(400).json({ message: 'OTP expired or not found. Please request a new one.' });
+    }
+
+    if (otpRecord.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const hashedPin = await bcrypt.hash(pin, salt);
@@ -68,11 +115,8 @@ router.post('/register', async (req, res) => {
     });
 
     if (user) {
-      // Check if account already exists
-      const existingAccount = await Account.findOne({ userId: user._id });
-      if (existingAccount) {
-        return res.status(200).json({ message: 'User registered successfully', account: existingAccount });
-      }
+      // Clear OTP
+      await Otp.deleteMany({ email });
 
       // Generate unique account number
       const accountNumber = await createUniqueAccountNumber();
