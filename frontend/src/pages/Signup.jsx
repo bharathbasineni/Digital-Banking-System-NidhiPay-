@@ -40,10 +40,10 @@ const Signup = () => {
     setSuccess('');
     setLoading(true);
     try {
-      const res = await register(formData.name, formData.email, formData.password, formData.pin);
+      await register(formData.name, formData.email, formData.password, formData.pin);
       setSuccess('OTP sent successfully! Redirecting to verification...');
       setTimeout(() => {
-        navigate('/verify-otp', { state: { ...formData, demoOtp: res?.demoOtp } });
+        navigate('/verify-otp', { state: { ...formData } });
       }, 1500);
     } catch (err) {
       if (err.message === 'Network Error') {

@@ -78,11 +78,7 @@ router.post('/register', async (req, res) => {
         html: message
       });
 
-      res.status(200).json({ 
-        message: 'OTP sent to email', 
-        requireOtp: true,
-        demoOtp: otp // Included so the user can see it if hosting on Render where SMTP is blocked
-      });
+      res.status(200).json({ message: 'OTP sent to email', requireOtp: true });
     } catch (error) {
       await Otp.deleteMany({ email });
       return res.status(500).json({ message: 'Error sending OTP email' });
