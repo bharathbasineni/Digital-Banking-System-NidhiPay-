@@ -11,7 +11,9 @@ const userSchema = new mongoose.Schema({
   lockUntil: { type: Date },
   twoFactorEnabled: { type: Boolean, default: false },
   otp: { type: String },
-  otpExpires: { type: Date }
+  otpExpires: { type: Date },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
