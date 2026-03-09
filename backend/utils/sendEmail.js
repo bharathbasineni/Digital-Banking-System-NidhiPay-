@@ -10,6 +10,9 @@ const sendEmail = async (options) => {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      connectionTimeout: 3000,
+      greetingTimeout: 3000,
+      socketTimeout: 3000
     });
 
     const mailOptions = {
@@ -19,11 +22,15 @@ const sendEmail = async (options) => {
       html: options.html,
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`Email sent: ${info.messageId}`);
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log(`Email sent: ${info.messageId}`);
+    } catch (err) {
+      console.error(`Nodemailer failed (Likely due to Render Free Tier SMTP blocking): ${err.message}`);
+    }
   } catch (error) {
-    console.error(`Error sending email: ${error.message}`);
-    throw new Error('Email could not be sent');
+    console.error(`Error in sendEmail setup: ${error.message}`);
+    // Don't throw error to prevent breaking the calling request
   }
 };
 
