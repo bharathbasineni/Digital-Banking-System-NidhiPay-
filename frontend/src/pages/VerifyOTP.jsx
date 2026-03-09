@@ -51,7 +51,10 @@ const VerifyOTP = () => {
     setSuccess('');
     setLoading(true);
     try {
-      await api.post('/auth/register', signupData);
+      const { data } = await api.post('/auth/register', signupData);
+      if (data?.debugOtp) {
+        console.log(`[DEVELOPER USE ONLY] RESENT OTP is: ${data.debugOtp}.`);
+      }
       setSuccess('A new OTP has been sent to your email.');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to resend OTP');

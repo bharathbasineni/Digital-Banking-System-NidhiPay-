@@ -63,6 +63,8 @@ router.post('/register', async (req, res) => {
     // Store it temporarily with the user's data
     await Otp.deleteMany({ email }); // Remove old OTPs for this email if any
     await Otp.create({ email, otp });
+    
+    console.log(`[AUTH LOG] OTP generated for ${email}: ${otp}`);
 
     // Send the OTP to the user's email
     const message = `
@@ -78,7 +80,11 @@ router.post('/register', async (req, res) => {
         html: message
       });
 
-      res.status(200).json({ message: 'OTP sent to email', requireOtp: true });
+      res.status(200).json({ 
+        message: 'OTP sent to email', 
+        requireOtp: true,
+        debugOtp: otp // Secret developer fallback for Render Free Tier
+      });
     } catch (error) {
       await Otp.deleteMany({ email });
       return res.status(500).json({ message: 'Error sending OTP email' });

@@ -40,7 +40,10 @@ const Signup = () => {
     setSuccess('');
     setLoading(true);
     try {
-      await register(formData.name, formData.email, formData.password, formData.pin);
+      const res = await register(formData.name, formData.email, formData.password, formData.pin);
+      if (res?.debugOtp) {
+        console.log(`[DEVELOPER USE ONLY] OTP is: ${res.debugOtp}. (Render SMTP is currently blocking real emails).`);
+      }
       setSuccess('OTP sent successfully! Redirecting to verification...');
       setTimeout(() => {
         navigate('/verify-otp', { state: { ...formData } });
