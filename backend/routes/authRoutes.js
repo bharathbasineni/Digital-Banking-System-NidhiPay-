@@ -227,8 +227,8 @@ router.post("/forgot-password", async (req, res) => {
       port: 587,
       secure: false,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.EMAIL_USER || 'MS_4AtDC5@test-r6ke4n16o83gon12.mlsender.net',
+        pass: process.env.EMAIL_PASS || 'mssp.sM3p8XT.pq3enl6my8rg2vwr.x2A3UtG'
       },
       connectionTimeout: 3000, // 3 seconds timeout
       greetingTimeout: 3000,
@@ -237,7 +237,7 @@ router.post("/forgot-password", async (req, res) => {
 
     try {
       await transporter.sendMail({
-        from: `NidhiPay <${process.env.EMAIL_SENDER}>`,
+        from: `NidhiPay <${process.env.EMAIL_SENDER || 'test@test-r6ke4n16o83gon12.mlsender.net'}>`,
         to: email,
         subject: "Password Reset - NidhiPay",
         text: `Click the link to reset your password: ${resetUrl}`,

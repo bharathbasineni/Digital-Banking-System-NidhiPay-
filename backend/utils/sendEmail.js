@@ -6,8 +6,8 @@ const sendEmail = async (options) => {
     port: 587,
     secure: false, // TLS
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
+      user: process.env.EMAIL_USER || 'MS_4AtDC5@test-r6ke4n16o83gon12.mlsender.net',
+      pass: process.env.EMAIL_PASS || 'mssp.sM3p8XT.pq3enl6my8rg2vwr.x2A3UtG'
     },
     connectionTimeout: 5000,
     greetingTimeout: 5000,
@@ -16,7 +16,7 @@ const sendEmail = async (options) => {
 
   try {
     await transporter.sendMail({
-      from: `NidhiPay <${process.env.EMAIL_SENDER}>`,
+      from: `NidhiPay <${process.env.EMAIL_SENDER || 'test@test-r6ke4n16o83gon12.mlsender.net'}>`,
       to: options.email,
       subject: options.subject,
       html: options.html,
