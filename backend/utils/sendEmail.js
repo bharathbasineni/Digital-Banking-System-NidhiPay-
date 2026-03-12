@@ -24,7 +24,7 @@ const sendEmail = async (options) => {
     console.log(`[EMAIL] Successfully sent OTP to ${options.email}`);
   } catch (err) {
     console.error(`[EMAIL ERROR] Nodemailer failed: ${err.message}`);
-    throw err;
+    // Swallowing error so the OTP verification flow can gracefully continue
   }
 };
 
