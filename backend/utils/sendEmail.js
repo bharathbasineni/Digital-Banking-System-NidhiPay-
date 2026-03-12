@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: "smtp.mailersend.net",
     port: 587,
     secure: false, // TLS
     auth: {
@@ -16,15 +16,15 @@ const sendEmail = async (options) => {
 
   try {
     await transporter.sendMail({
-      from: `NidhiPay <${process.env.EMAIL_USER}>`,
+      from: `NidhiPay <${process.env.EMAIL_SENDER}>`,
       to: options.email,
       subject: options.subject,
       html: options.html,
     });
     console.log(`[EMAIL] Successfully sent OTP to ${options.email}`);
   } catch (err) {
-    console.error(`[EMAIL ERROR] Nodemailer failed (Render blocking SMTP port 587): ${err.message}`);
-    // DO NOT throw error, allow the OTP verification flow to continue via Render Server Logs
+    console.error(`[EMAIL ERROR] Nodemailer failed: ${err.message}`);
+    throw err;
   }
 };
 

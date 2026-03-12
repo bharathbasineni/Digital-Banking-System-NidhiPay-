@@ -223,7 +223,7 @@ router.post("/forgot-password", async (req, res) => {
     const nodemailer = require("nodemailer");
 
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtp.mailersend.net",
       port: 587,
       secure: false,
       auth: {
@@ -235,25 +235,20 @@ router.post("/forgot-password", async (req, res) => {
       socketTimeout: 3000
     });
 
-    try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Password Reset - NidhiPay",
-        text: `Click the link to reset your password: ${resetUrl}`,
-        html: `
-          <h1>Password Reset Request</h1>
-          <p>You have requested to reset your password.</p>
-          <p>Please click the link below to reset it:</p>
-          <a href="${resetUrl}" clicktracking=off>${resetUrl}</a>
-          <p>This link is valid for 15 minutes.</p>
-        `
-      });
-      console.log(`Password reset email sent successfully to ${email}`);
-    } catch (err) {
-      console.error("Nodemailer failed (Likely due to Render Free Tier SMTP blocking):", err.message);
-      console.log("FALLBACK: Reset link generated for demo purposes:", resetUrl);
-    }
+    await transporter.sendMail({
+      from: `NidhiPay <${process.env.EMAIL_SENDER}>`,
+      to: email,
+      subject: "Password Reset - NidhiPay",
+      text: `Click the link to reset your password: ${resetUrl}`,
+      html: `
+        <h1>Password Reset Request</h1>
+        <p>You have requested to reset your password.</p>
+        <p>Please click the link below to reset it:</p>
+        <a href="${resetUrl}" clicktracking=off>${resetUrl}</a>
+        <p>This link is valid for 15 minutes.</p>
+      `
+    });
+    console.log(`Password reset email sent successfully to ${email}`);
 
     return res.status(200).json({
       success: true,
