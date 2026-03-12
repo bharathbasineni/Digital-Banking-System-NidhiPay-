@@ -71,7 +71,7 @@ const PublicLayout = () => {
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-6 text-sm font-semibold text-slate-600">
             <a href="https://github.com/BharathBasineni" target="_blank" rel="noreferrer" className="hover:text-indigo-600 transition-colors">Project Documentation</a>
             <a href="https://github.com/BharathBasineni" target="_blank" rel="noreferrer" className="hover:text-indigo-600 transition-colors">GitHub Repository</a>
-            <a href="mailto:contact@example.com" className="hover:text-indigo-600 transition-colors">Contact Developer</a>
+            <Link to="/contact" className="hover:text-indigo-600 transition-colors">Contact Developer</Link>
           </div>
         </div>
       </footer>

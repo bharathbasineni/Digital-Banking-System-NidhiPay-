@@ -300,4 +300,34 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+// POST /api/auth/contact
+router.post('/contact', async (req, res) => {
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const htmlMessage = `
+      <h1>New Contact Message</h1>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Message:</strong></p>
+      <p>${message}</p>
+    `;
+
+    await sendEmail({
+      email: 'bharathbasineni1@gmail.com',
+      subject: `New Contact Request from ${name}`,
+      html: htmlMessage
+    });
+
+    res.status(200).json({ message: 'Message sent successfully' });
+  } catch (error) {
+    console.error('Contact error:', error);
+    res.status(500).json({ message: 'Failed to send message' });
+  }
+});
+
 module.exports = router;

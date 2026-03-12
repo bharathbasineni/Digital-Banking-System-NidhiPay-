@@ -160,7 +160,7 @@ const Landing = () => {
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-x-8 gap-y-4 text-sm font-semibold text-slate-500">
             <span className="text-slate-400">Built with MERN Stack</span>
             <a href="https://github.com" className="hover:text-indigo-600 transition-colors">GitHub Repository</a>
-            <a href="mailto:developer@example.com" className="hover:text-indigo-600 transition-colors">Contact Developer</a>
+            <Link to="/contact" className="hover:text-indigo-600 transition-colors">Contact Developer</Link>
           </div>
         </div>
       </footer>

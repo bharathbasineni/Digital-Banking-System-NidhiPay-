@@ -24,6 +24,7 @@ import Architecture from './pages/public/Architecture';
 import Features from './pages/public/Features';
 import Modules from './pages/public/Modules';
 import Developer from './pages/public/Developer';
+import Contact from './pages/public/Contact';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="/features" element={<Features />} />
             <Route path="/modules" element={<Modules />} />
             <Route path="/developer" element={<Developer />} />
+            <Route path="/contact" element={<Contact />} />
           </Route>
 
           {/* Auth Pages */}
