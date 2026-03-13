@@ -14,18 +14,13 @@ const sendEmail = async (options) => {
     socketTimeout: 5000
   });
 
-  try {
-    await transporter.sendMail({
-      from: `NidhiPay <${process.env.EMAIL_SENDER || 'test@test-r6ke4n16o83gon12.mlsender.net'}>`,
-      to: options.email,
-      subject: options.subject,
-      html: options.html,
-    });
-    console.log(`[EMAIL] Successfully sent OTP to ${options.email}`);
-  } catch (err) {
-    console.error(`[EMAIL ERROR] Nodemailer failed: ${err.message}`);
-    // Swallowing error so the OTP verification flow can gracefully continue
-  }
+  await transporter.sendMail({
+    from: `NidhiPay <${process.env.EMAIL_SENDER || 'test@test-r6ke4n16o83gon12.mlsender.net'}>`,
+    to: options.email,
+    subject: options.subject,
+    html: options.html,
+  });
+  console.log(`[EMAIL] Successfully sent email to ${options.email}`);
 };
 
 module.exports = sendEmail;

@@ -41,13 +41,20 @@ const Signup = () => {
     setLoading(true);
     try {
       const res = await register(formData.name, formData.email, formData.password, formData.pin);
-      if (res?.debugOtp) {
-        console.log(`[DEVELOPER USE ONLY] OTP is: ${res.debugOtp}. (Render SMTP is currently blocking real emails).`);
+      
+      if (res?.emailError) {
+        setSuccess('Account created, but OTP email failed to send. Please check developer console for OTP or verify SMTP settings.');
+      } else {
+        setSuccess('OTP sent successfully! Redirecting to verification...');
       }
-      setSuccess('OTP sent successfully! Redirecting to verification...');
+
+      if (res?.debugOtp) {
+        console.log(`[DEVELOPER USE ONLY] OTP is: ${res.debugOtp}.`);
+      }
+
       setTimeout(() => {
         navigate('/verify-otp', { state: { ...formData } });
-      }, 1500);
+      }, 3000);
     } catch (err) {
       if (err.message === 'Network Error') {
         setError('Cannot connect to server. Please ensure the backend is running.');

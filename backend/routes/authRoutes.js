@@ -86,8 +86,15 @@ router.post('/register', async (req, res) => {
         debugOtp: otp // Secret developer fallback for Render Free Tier
       });
     } catch (error) {
-      await Otp.deleteMany({ email });
-      return res.status(500).json({ message: 'Error sending OTP email' });
+      console.error(`[AUTH] Email sending failed during registration: ${error.message}`);
+      // Even if email fails, we return 200 with debugOtp so the user isn't stuck during testing
+      // but we warn them about the failure
+      res.status(200).json({ 
+        message: 'Registration initiated, but email delivery failed. (Check server logs or using local debug OTP)', 
+        requireOtp: true,
+        debugOtp: otp,
+        emailError: true
+      });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -220,27 +227,10 @@ router.post("/forgot-password", async (req, res) => {
 
     const resetUrl = `https://digital-banking-system-nidhi-pay.vercel.app/reset-password/${resetToken}`;
 
-    const nodemailer = require("nodemailer");
-
-    const transporter = nodemailer.createTransport({
-      host: "smtp.mailersend.net",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER || 'MS_4AtDC5@test-r6ke4n16o83gon12.mlsender.net',
-        pass: process.env.EMAIL_PASS || 'mssp.sM3p8XT.pq3enl6my8rg2vwr.x2A3UtG'
-      },
-      connectionTimeout: 3000, // 3 seconds timeout
-      greetingTimeout: 3000,
-      socketTimeout: 3000
-    });
-
     try {
-      await transporter.sendMail({
-        from: `NidhiPay <${process.env.EMAIL_SENDER || 'test@test-r6ke4n16o83gon12.mlsender.net'}>`,
-        to: email,
+      await sendEmail({
+        email: email,
         subject: "Password Reset - NidhiPay",
-        text: `Click the link to reset your password: ${resetUrl}`,
         html: `
           <h1>Password Reset Request</h1>
           <p>You have requested to reset your password.</p>
@@ -251,7 +241,7 @@ router.post("/forgot-password", async (req, res) => {
       });
       console.log(`Password reset email sent successfully to ${email}`);
     } catch (err) {
-      console.error("Nodemailer failed:", err.message);
+      console.error("Password reset email failed:", err.message);
       console.log("FALLBACK: Reset link generated for demo purposes:", resetUrl);
     }
 
